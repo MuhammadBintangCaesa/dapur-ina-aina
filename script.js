@@ -68,6 +68,7 @@ function renderMenu(category) {
           <h3 class="name">${item.name}</h3>
           <div class="price">${rupiah(item.price)}</div>
         </div>
+        <p class="menu-stock ${item.stock <= 0 ? 'out' : ''}">${item.stock > 0 ? `Stok: ${item.stock}` : 'Stok habis'}</p>
         ${item.stock > 0
           ? `<button class="add" data-id="${item.id}">+ Tambah ke keranjang</button>`
           : `<button class="add" disabled>Stok habis</button>`}
@@ -202,6 +203,7 @@ checkoutButton.addEventListener('click', () => { renderOrderSummary(); openModal
 document.querySelector('#open-dashboard').addEventListener('click', async () => {
   const user = await checkSession();
   if (user) {
+    document.querySelector('#admin-greeting').textContent = `Halo, admin ${user.name}`;
     renderStockDashboard();
     openModal('dashboard-modal');
   } else {
@@ -231,6 +233,7 @@ loginForm.addEventListener('submit', async event => {
     if (!res.ok || result.error) throw new Error(result.error || 'Login gagal.');
 
     closeModal('login-modal');
+    document.querySelector('#admin-greeting').textContent = `Halo, admin ${result.user.name}`;
     renderStockDashboard();
     openModal('dashboard-modal');
   } catch (err) {
@@ -261,10 +264,17 @@ document.querySelector('.payment-methods input:checked')?.closest('label')?.clas
 
 /* ================= proses bayar (checkout ke server) ================= */
 payButton.addEventListener('click', async () => {
-  const { count } = cartTotals();
+  const { count, total } = cartTotals();
   if (count === 0) return;
 
   const method = document.querySelector('.payment-methods input:checked')?.value ?? 'cash';
+
+  // Konfirmasi ulang khusus buat pembayaran tunai, karena nggak ada verifikasi otomatis kayak QRIS/kartu
+  if (method === 'cash') {
+    const confirmed = confirm(`Konfirmasi: pelanggan bayar tunai sebesar ${rupiah(total)}?`);
+    if (!confirmed) return;
+  }
+
   const items = [...cart.values()].map(item => ({ product_id: item.id, quantity: item.qty }));
 
   payButton.disabled = true;
@@ -402,4 +412,3 @@ productForm.addEventListener('submit', async event => {
 /* ================= init ================= */
 syncCart();
 loadProducts();
-renderStockDashboard();

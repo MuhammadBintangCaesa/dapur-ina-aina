@@ -102,7 +102,12 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
 .product-form button[type="submit"] { padding:13px; border:0; border-radius:9px; background:var(--brown-800); color:white; font-size:14px; font-weight:700; transition:background .15s; }
 .product-form button[type="submit"]:hover:not(:disabled) { background:var(--brown-950); }
 .product-form button[type="submit"]:disabled { opacity:.6; cursor:not-allowed; }
-
+ 
 @media (max-width:440px) {
   .product-form .form-row { grid-template-columns:1fr; }
 }
+ 
+/* ===== Info stok di kartu menu ===== */
+.menu-stock { margin:6px 0 0; font-size:12px; font-weight:600; color:#7a8f6f; }
+.menu-stock.out { color:#a83c33; }
+ 
