@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
 
+/* menu utama edit warna */
 :root { --brown-950:#332018; --brown-800:#5c3828; --brown-650:#80563e; --brown:#9a7156; --brown-light:#c99f7c; --cream:#fffaf4; --cream-deep:#f4e8dc; --orange:#e8874d; --line:rgba(82,48,32,.16); }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; }
@@ -15,7 +16,8 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
 .cart-panel { position:fixed; z-index:4; bottom:0; left:50%; display:flex; align-items:center; justify-content:space-between; gap:30px; width:min(620px,calc(100% - 28px)); padding:13px 15px 13px 20px; transform:translateX(-50%); border-radius:13px 13px 0 0; background:var(--brown-950); color:white; box-shadow:0 -5px 25px rgba(49,29,20,.17); }.cart-panel p { margin:0 0 2px; color:#cfb8a6; font-size:11px; }.cart-panel strong { font-size:16px; }.checkout { padding:11px 14px; border:0; border-radius:7px; background:var(--orange); color:var(--brown-950); font-size:12px; font-weight:700; }.checkout span { margin-left:13px; font-size:17px; }
 @media (max-width:760px) { .site-header { gap:14px; padding:12px 20px; flex-wrap:wrap; }.brand { min-width:auto; margin-right:auto; }.nav { order:3; width:100%; justify-content:space-between; gap:8px; }.header-actions { gap:7px; }.hero { min-height:unset; padding:50px 20px; }.hero-visual { display:none; }.menu-section { padding:48px 20px; }.section-heading { align-items:start; flex-direction:column; gap:14px; }.menu-grid { grid-template-columns:repeat(2,1fr); gap:14px; }.card img { height:155px; } }
 @media (max-width:440px) { .brand span,.admin-button { display:none; }.hero h1 { font-size:48px; }.menu-grid { grid-template-columns:1fr; }.card img { height:210px; }.cart-panel { width:100%; border-radius:0; }.cart { padding:9px; }.cart > span:not(.cart-icon) { display:none; }.cart-icon { display:inline; } }
-/* ===== Modal base (dibutuhkan supaya modal bisa muncul/hilang) ===== */
+/*  Modal base (dibutuhkan supaya modal bisa muncul/hilang) */
+
 .modal { position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(41,24,16,.45); backdrop-filter:blur(2px); opacity:0; visibility:hidden; transition:opacity .2s ease; }
 .modal.open { opacity:1; visibility:visible; }
 .dialog { position:relative; width:100%; max-width:460px; max-height:88vh; overflow-y:auto; padding:28px 26px 24px; border-radius:16px; background:var(--cream); box-shadow:0 22px 45px rgba(49,29,20,.28); transform:translateY(14px); transition:transform .2s ease; }
@@ -23,7 +25,7 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
 .close-modal { position:absolute; top:16px; right:16px; width:32px; height:32px; border:0; border-radius:50%; background:var(--cream-deep); color:var(--brown-800); font-size:18px; line-height:1; }
 .close-modal:hover { background:#e6d3c2; }
 
-/* ===== Ringkasan pesanan ===== */
+/*  Ringkasan pesanan */
 .order-summary { margin:18px 0 22px; }
 .empty-cart { margin:0; padding:18px 0; color:#8a6f5f; font-size:14px; text-align:center; }
 .summary-list { display:flex; flex-direction:column; gap:12px; }
@@ -40,7 +42,7 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
 .summary-total-row { display:flex; align-items:center; justify-content:space-between; padding-top:16px; margin-top:16px; border-top:1px dashed var(--line); font-size:14px; color:var(--brown-950); }
 .summary-total-row strong { font-size:19px; }
 
-/* ===== Metode pembayaran ===== */
+/*  Metode pembayaran */
 .method-label { margin:0 0 10px; font-size:13px; font-weight:700; color:var(--brown-800); }
 .payment-methods { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:22px; }
 .payment-methods label { position:relative; display:flex; align-items:center; gap:10px; padding:13px 14px; border:1.5px solid var(--line); border-radius:11px; cursor:pointer; transition:border-color .15s, background .15s; }
@@ -50,7 +52,7 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
 .payment-methods b { display:block; font-size:13px; color:var(--brown-950); }
 .payment-methods small { display:block; margin-top:2px; font-size:11px; color:#8a6f5f; }
 
-/* ===== Tombol bayar ===== */
+/*  Tombol bayar */
 .pay-button { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; padding:14px; border:0; border-radius:10px; background:var(--brown-800); color:white; font-size:14px; font-weight:700; transition:background .15s; }
 .pay-button:hover:not(:disabled) { background:var(--brown-950); }
 .pay-button:disabled { background:#d8c8ba; color:#a3897a; cursor:not-allowed; }
@@ -65,7 +67,7 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
   .dialog { padding:22px 18px 20px; }
 }
 
-/* ===== Dashboard stok ===== */
+/*  Dashboard stok */
 .stock-status.critical { background:#fbe2df; color:#a83c33; }
 .stock-list { display:flex; flex-direction:column; gap:10px; margin-bottom:22px; max-height:260px; overflow-y:auto; }
 .stock-row { display:grid; grid-template-columns:42px 1fr auto; align-items:center; gap:12px; padding:10px; border:1px solid var(--line); border-radius:10px; }
@@ -79,10 +81,10 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
 .restock-btn:hover { background:var(--brown-950); }
 .restock-btn:disabled { opacity:.6; }
 
-/* ===== State kosong / error ===== */
+/*  State kosong / error */
 .error-state { padding:24px; color:#a83c33; font-size:14px; text-align:center; }
 
-/* ===== Login admin ===== */
+/*  Login admin */
 .login-dialog form { display:flex; flex-direction:column; gap:14px; margin-top:16px; }
 .login-dialog label { display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--brown-800); }
 .login-dialog input { padding:11px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px; }
@@ -90,7 +92,7 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
 .dashboard-heading { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .dashboard-heading .admin-button { margin-left:auto; padding:7px 13px; font-size:12px; }
  
-/* ===== Form tambah menu ===== */
+/*  Form tambah menu */
 .product-form { display:flex; flex-direction:column; gap:14px; padding-top:18px; margin-top:18px; border-top:1px solid var(--line); }
 .product-form h3 { margin:0; font-family:'DM Serif Display',Georgia,serif; font-size:19px; font-weight:400; color:var(--brown-950); }
 .product-form label { display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--brown-800); }
@@ -107,7 +109,7 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
   .product-form .form-row { grid-template-columns:1fr; }
 }
  
-/* ===== Info stok di kartu menu ===== */
+/*  Info stok di kartu menu */
 .menu-stock { margin:6px 0 0; font-size:12px; font-weight:600; color:#7a8f6f; }
 .menu-stock.out { color:#a83c33; }
  

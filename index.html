@@ -6,13 +6,16 @@
   <title>Dapur Ina Aina — Masakan Rumahan</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <header class="site-header">
+    <!-- bagian header pada halaman utama -->
     <a class="brand" href="#" aria-label="Dapur Ina Aina beranda"><img src="assets/logo.png" alt="Logo Dapur Ina Aina"><span>Dapur Ina<br><b>Aina</b></span></a>
     <nav class="nav" aria-label="Navigasi utama"><a class="current" href="#menu">Menu</a><a href="#dashboard">Dashboard</a></nav>
     <div class="header-actions"><button class="admin-button" id="open-dashboard">Dashboard</button><button class="cart" id="open-payment" aria-label="Buka keranjang"><span class="cart-icon">Bag</span><span>Keranjang</span><b id="cart-count">0</b></button></div>
   </header>
 
+  <!-- bagian utama halaman (main content) -->
   <main>
     <section class="menu-section" id="menu">
       <div class="section-heading"><div><p class="kicker">Yuk pesan</p><h2>Menu hari ini, siap dimasak untukmu</h2></div><p class="menu-intro">Dimasak saat dipesan, untuk rasa yang selalu hangat dan segar.</p></div>
@@ -21,6 +24,7 @@
     </section>
   </main>
 
+  <!-- bagian keranjang dan pembayaran -->
   <aside class="cart-panel" id="pesanan" aria-label="Ringkasan keranjang"><div><p>Pesanan kamu</p><strong id="cart-total">Rp0</strong></div><button class="checkout" id="checkout-button">Lanjutkan pesanan <span>→</span></button></aside>
 
   <div class="modal" id="payment-modal" aria-hidden="true"><section class="dialog payment-dialog" role="dialog" aria-modal="true" aria-labelledby="payment-title"><button class="close-modal" data-close="payment-modal" aria-label="Tutup">×</button><p class="kicker">Konfirmasi pesanan</p><h2 id="payment-title">Pembayaran</h2><div class="order-summary" id="order-summary"><p>Keranjang kamu masih kosong.</p></div><p class="method-label">Pilih metode pembayaran</p><div class="payment-methods"><label><input type="radio" name="payment" value="cash" checked><span><b>Tunai</b><small>Bayar langsung di kasir</small></span></label><label><input type="radio" name="payment" value="debit"><span><b>Debit</b><small>Kartu debit / transfer</small></span></label><label><input type="radio" name="payment" value="credit_card"><span><b>Kartu Kredit</b><small>Visa, Mastercard, dan lainnya</small></span></label><label><input type="radio" name="payment" value="qris"><span><b>QRIS</b><small>Pindai kode QR pembayaran</small></span></label></div><button class="pay-button" id="pay-button">Bayar sekarang <span id="payment-total">Rp0</span></button></section></div>

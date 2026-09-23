@@ -1,3 +1,4 @@
+// server.js: konfigurasi dan endpoint untuk backend aplikasi dapur-aina
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
@@ -28,7 +29,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
 });
 
-/* ============ Auth ============ */
+/* autitentikasi admin dia admin/bukan  */ 
 function requireAdmin(req, res, next) {
   if (req.session.user && req.session.user.role === 'administrator') return next();
   return res.status(401).json({ error: 'Silakan login sebagai admin dulu.' });
@@ -64,7 +65,7 @@ app.get('/api/session', (req, res) => {
   res.json({ user: req.session.user || null });
 });
 
-/* ============ GET /api/products ============ */
+// GET /api/products: ambil daftar produk aktif dari database
 // Join ke categories supaya frontend dapat "category" berupa slug (makanan-utama/appetizer/minuman)
 // dan "image" dari kolom image_path.
 app.get('/api/products', async (req, res) => {
@@ -84,7 +85,7 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
-/* ============ POST /api/products (tambah menu baru) — hanya admin ============ */
+// POST /api/products: tambah menu baru — hanya admin
 app.post('/api/products', requireAdmin, async (req, res) => {
   const { name, price, stock, category, image } = req.body; // category = slug, mis. 'makanan-utama'
 
@@ -108,7 +109,7 @@ app.post('/api/products', requireAdmin, async (req, res) => {
   }
 });
 
-/* ============ POST /api/restock — hanya admin ============ */
+// POST /api/restock: tambah stok produk — hanya admin
 app.post('/api/restock', requireAdmin, async (req, res) => {
   const { product_id, quantity } = req.body;
 

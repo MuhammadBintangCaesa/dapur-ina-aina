@@ -1,17 +1,17 @@
-/* ================= konfigurasi ================= */
+// konfigurasi terhadap API  untuk mengkoneksikan aplikasi dengan server
 const API = {
   products: '/api/products',
   restock:  '/api/restock',
   checkout: '/api/checkout',
 };
 
-/* ================= state ================= */
+// state logic
 let products = [];               // hasil fetch dari database
 const cart = new Map();          // product id -> { id, name, price, image, stock, qty }
 
 const rupiah = value => 'Rp' + Number(value).toLocaleString('id-ID');
 
-/* ================= elemen ================= */
+//  elemen yang digunakan untuk manipulasi DOM pada website
 const menuList       = document.querySelector('#menu-list');
 const cartCount       = document.querySelector('#cart-count');
 const cartTotal        = document.querySelector('#cart-total');
@@ -26,7 +26,7 @@ const loginForm       = document.querySelector('#login-form');
 const loginError      = document.querySelector('#login-error');
 const logoutButton    = document.querySelector('#logout-button');
 
-/* ================= sesi admin ================= */
+//  sesi admin: fungsi-fungsi terkait autentikasi dan manajemen dashboard
 async function checkSession() {
   try {
     const res = await fetch('/api/session');
@@ -37,7 +37,7 @@ async function checkSession() {
   }
 }
 
-/* ================= ambil data menu dari database ================= */
+// ambil data menu dari database
 async function loadProducts() {
   try {
     const res = await fetch(API.products);
@@ -51,7 +51,7 @@ async function loadProducts() {
   }
 }
 
-/* ================= render menu publik ================= */
+// render menu publik berdasarkan kategori
 function renderMenu(category) {
   const items = products.filter(p => p.category === category);
 
@@ -92,7 +92,7 @@ menuList.addEventListener('click', event => {
   setTimeout(() => { button.textContent = '+ Tambah ke keranjang'; button.classList.remove('added'); }, 900);
 });
 
-/* ================= cart ================= */
+// fungsi-fungsi terkait keranjang belanja  dan otomatis memperbarui tampilan dengan menambahkan item
 function addToCart(id) {
   const product = products.find(p => p.id === id);
   if (!product) return;
@@ -142,7 +142,7 @@ function syncCart() {
   payButton.disabled = count === 0;
 }
 
-/* ================= ringkasan pesanan (modal pembayaran) ================= */
+// ringkasan pesanan (modal pembayaran)
 function renderOrderSummary() {
   const { total, count } = cartTotals();
 
@@ -182,7 +182,7 @@ orderSummary.addEventListener('click', event => {
   if (event.target.closest('.qty-minus')) changeQty(id, -1);
 });
 
-/* ================= modal ================= */
+// modal: fungsi-fungsi untuk membuka dan menutup modal pada pembayaran dan dashboard
 function openModal(id) {
   const modal = document.getElementById(id);
   modal.classList.add('open');
@@ -253,7 +253,7 @@ document.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('c
 document.querySelectorAll('.modal').forEach(modal => modal.addEventListener('click', e => { if (e.target === modal) closeModal(modal.id); }));
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal.open').forEach(m => closeModal(m.id)); });
 
-/* ================= metode pembayaran ================= */
+// metode pembayaran
 document.querySelectorAll('.payment-methods label').forEach(label => {
   label.addEventListener('click', () => {
     document.querySelectorAll('.payment-methods label').forEach(l => l.classList.remove('selected'));
@@ -262,7 +262,7 @@ document.querySelectorAll('.payment-methods label').forEach(label => {
 });
 document.querySelector('.payment-methods input:checked')?.closest('label')?.classList.add('selected');
 
-/* ================= proses bayar (checkout ke server) ================= */
+// proses bayar yang langsung ke kasir (tunai)
 payButton.addEventListener('click', async () => {
   const { count, total } = cartTotals();
   if (count === 0) return;
@@ -311,7 +311,7 @@ payButton.addEventListener('click', async () => {
   }
 });
 
-/* ================= dashboard: daftar stok ================= */
+/*dashboard: daftar stok*/
 function renderStockDashboard() {
   if (products.length === 0) {
     stockList.innerHTML = '<p class="empty-cart">Belum ada data menu.</p>';
@@ -371,7 +371,7 @@ stockList.addEventListener('click', async event => {
   }
 });
 
-/* ================= dashboard: tambah menu baru ================= */
+// dashboard: tambah menu baru
 productForm.addEventListener('submit', async event => {
   event.preventDefault();
 
@@ -409,6 +409,6 @@ productForm.addEventListener('submit', async event => {
   }
 });
 
-/* ================= init ================= */
+// inisialisasi website/admin/dashboard
 syncCart();
 loadProducts();
