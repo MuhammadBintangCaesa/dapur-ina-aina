@@ -27,11 +27,116 @@
   <!-- bagian keranjang dan pembayaran -->
   <aside class="cart-panel" id="pesanan" aria-label="Ringkasan keranjang"><div><p>Pesanan kamu</p><strong id="cart-total">Rp0</strong></div><button class="checkout" id="checkout-button">Lanjutkan pesanan <span>→</span></button></aside>
 
-  <div class="modal" id="payment-modal" aria-hidden="true"><section class="dialog payment-dialog" role="dialog" aria-modal="true" aria-labelledby="payment-title"><button class="close-modal" data-close="payment-modal" aria-label="Tutup">×</button><p class="kicker">Konfirmasi pesanan</p><h2 id="payment-title">Pembayaran</h2><div class="order-summary" id="order-summary"><p>Keranjang kamu masih kosong.</p></div><p class="method-label">Pilih metode pembayaran</p><div class="payment-methods"><label><input type="radio" name="payment" value="cash" checked><span><b>Tunai</b><small>Bayar langsung di kasir</small></span></label><label><input type="radio" name="payment" value="debit"><span><b>Debit</b><small>Kartu debit / transfer</small></span></label><label><input type="radio" name="payment" value="credit_card"><span><b>Kartu Kredit</b><small>Visa, Mastercard, dan lainnya</small></span></label><label><input type="radio" name="payment" value="qris"><span><b>QRIS</b><small>Pindai kode QR pembayaran</small></span></label></div><button class="pay-button" id="pay-button">Bayar sekarang <span id="payment-total">Rp0</span></button></section></div>
+  <div class="modal" id="payment-modal" aria-hidden="true">
+    <section class="dialog payment-dialog" role="dialog" aria-modal="true" aria-labelledby="payment-title">
+      <button class="close-modal" data-close="payment-modal" aria-label="Tutup">×</button>
+      <p class="kicker">Konfirmasi pesanan</p>
+      <h2 id="payment-title">Pembayaran</h2>
+      <div class="order-summary" id="order-summary"><p>Keranjang kamu masih kosong.</p></div>
+      <p class="method-label">Pilih metode pembayaran</p>
+      <div class="payment-methods">
+        <label>
+          <input type="radio" name="payment" value="cash" checked>
+          <span><b>Tunai</b><small>Bayar langsung di kasir</small></span>
+        </label>
+        <label>
+          <input type="radio" name="payment" value="debit">
+          <span><b>Debit</b><small>Kartu debit / transfer</small></span>
+        </label>
+        <label>
+          <input type="radio" name="payment" value="credit_card">
+          <span><b>Kartu Kredit</b><small>Visa, Mastercard, dan lainnya</small></span>
+        </label>
+        <label>
+          <input type="radio" name="payment" value="qris">
+          <span><b>QRIS</b><small>Pindai kode QR pembayaran</small></span>
+        </label>
+      </div>
+      <button class="pay-button" id="pay-button">Bayar sekarang <span id="payment-total">Rp0</span></button>
+    </section>
+  </div>
 
-  <div class="modal" id="login-modal" aria-hidden="true"><section class="dialog login-dialog" role="dialog" aria-modal="true" aria-labelledby="login-title"><button class="close-modal" data-close="login-modal" aria-label="Tutup">×</button><p class="kicker">Khusus admin</p><h2 id="login-title">Login dashboard</h2><form id="login-form"><label>Username<input name="username" required autocomplete="username"></label><label>Password<input name="password" type="password" required autocomplete="current-password"></label><p class="login-error" id="login-error" hidden></p><button type="submit" class="pay-button">Masuk</button></form></section></div>
+  <div class="modal" id="login-modal" aria-hidden="true">
+    <section class="dialog login-dialog" role="dialog" aria-modal="true" aria-labelledby="login-title">
+      <button class="close-modal" data-close="login-modal" aria-label="Tutup">×</button>
+      <p class="kicker">Khusus admin</p>
+      <h2 id="login-title">Login dashboard</h2>
+      <form id="login-form">
+        <label>Username<input name="username" required autocomplete="username"></label>
+        <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+        <p class="login-error" id="login-error" hidden></p>
+        <button type="submit" class="pay-button">Masuk</button>
+      </form>
+    </section>
+  </div>
 
-  <div class="modal" id="dashboard-modal" aria-hidden="true"><section class="dialog dashboard-dialog" role="dialog" aria-modal="true" aria-labelledby="dashboard-title"><button class="close-modal" data-close="dashboard-modal" aria-label="Tutup">×</button><div class="dashboard-heading"><div><p class="kicker" id="admin-greeting">Administrator</p><h2 id="dashboard-title">Stok & menu</h2></div><span class="stock-status" id="stock-status">Stok aman</span><button type="button" class="admin-button" id="logout-button">Logout</button></div><div class="dashboard-content"><div class="stock-list" id="stock-list"></div><form class="product-form" id="product-form"><h3>Tambah menu baru</h3><label>Nama menu<input name="name" required placeholder="Contoh: Ayam Bakar"></label><div class="form-row"><label>Harga<input name="price" type="number" min="1" required placeholder="25000"></label><label>Stok awal<input name="stock" type="number" min="0" required placeholder="10"></label></div><label>Kategori<select name="category"><option value="makanan-utama">Makanan Utama</option><option value="appetizer">Appetizer</option><option value="minuman">Minuman</option></select></label><label>Lokasi foto<input name="image" placeholder="assets/nama-foto.jpg"></label><button type="submit">Simpan menu</button></form></div></section></div>
+  <div class="modal" id="dashboard-modal" aria-hidden="true">
+    <section class="dialog dashboard-dialog" role="dialog" aria-modal="true" aria-labelledby="dashboard-title">
+      <button class="close-modal" data-close="dashboard-modal" aria-label="Tutup">×</button>
+      <div class="dashboard-heading">
+        <div><p class="kicker" id="admin-greeting">Administrator</p><h2 id="dashboard-title">Stok & menu</h2></div>
+        <span class="stock-status" id="stock-status">Stok aman</span>
+        <button type="button" class="admin-button" id="logout-button">Logout</button>
+      </div>
+
+      <!-- tab navigasi dashboard -->
+      <div class="dashboard-tabs" role="tablist" aria-label="Bagian dashboard">
+        <button type="button" class="tab-btn active" data-tab="stok">Stok & Menu</button>
+        <button type="button" class="tab-btn" data-tab="riwayat">Riwayat Pembelian</button>
+      </div>
+
+      <div class="dashboard-content" data-panel="stok">
+        <div class="stock-list" id="stock-list"></div>
+        <form class="product-form" id="product-form">
+          <h3>Tambah menu baru</h3>
+          <label>Nama menu<input name="name" required placeholder="Contoh: Ayam Bakar"></label>
+          <div class="form-row">
+            <label>Harga<input name="price" type="number" min="1" required placeholder="25000"></label>
+            <label>Stok awal<input name="stock" type="number" min="0" required placeholder="10"></label>
+          </div>
+          <label>Kategori<select name="category"><option value="makanan-utama">Makanan Utama</option><option value="appetizer">Appetizer</option><option value="minuman">Minuman</option></select></label>
+          <label>Lokasi foto<input name="image" placeholder="assets/nama-foto.jpg"></label>
+          <button type="submit">Simpan menu</button>
+        </form>
+      </div>
+
+      <!-- panel riwayat pembelian -->
+      <div class="dashboard-content" data-panel="riwayat" hidden>
+        <div class="history-filter">
+          <label>Tanggal<input type="date" id="history-date"></label>
+          <button type="button" id="history-filter-btn">Filter</button>
+          <button type="button" id="history-reset-btn">Semua transaksi</button>
+        </div>
+        <div class="history-list" id="history-list"></div>
+      </div>
+    </section>
+  </div>
+  <!-- struk pembayaran, muncul otomatis begitu pembayaran dikonfirmasi -->
+  <div class="modal" id="receipt-modal" aria-hidden="true">
+    <section class="dialog receipt-dialog" role="dialog" aria-modal="true" aria-labelledby="receipt-title">
+      <button class="close-modal" data-close="receipt-modal" aria-label="Tutup">×</button>
+      <div class="receipt-paper" id="receipt-paper">
+        <div class="receipt-head">
+          <p class="receipt-brand">Dapur Ina Aina</p>
+          <p class="receipt-sub">Struk Pembayaran</p>
+        </div>
+        <div class="receipt-meta">
+          <div><span>No. Order</span><strong id="receipt-order-number">-</strong></div>
+          <div><span>Tanggal</span><strong id="receipt-date">-</strong></div>
+        </div>
+        <div class="receipt-divider"></div>
+        <div class="receipt-items" id="receipt-items"></div>
+        <div class="receipt-divider"></div>
+        <div class="receipt-total-row"><span>Total</span><strong id="receipt-total">Rp0</strong></div>
+        <p class="receipt-thanks">Terima kasih sudah memesan 🙏</p>
+      </div>
+      <div class="receipt-actions">
+        <button type="button" class="admin-button" id="receipt-print-btn">Cetak struk</button>
+        <button type="button" class="pay-button" id="receipt-close-btn">Selesai</button>
+      </div>
+    </section>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>

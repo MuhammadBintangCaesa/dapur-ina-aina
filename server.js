@@ -142,6 +142,38 @@ app.post('/api/restock', requireAdmin, async (req, res) => {
   }
 });
 
+/* ============ GET /api/orders: riwayat pembelian — hanya admin ============ */
+// Menggabungkan orders + payments + ringkasan order_items jadi satu baris per transaksi.
+// Query opsional ?date=YYYY-MM-DD buat filter transaksi di tanggal tertentu.
+app.get('/api/orders', requireAdmin, async (req, res) => {
+  const { date } = req.query;
+
+  try {
+    let query = `
+      SELECT o.id, o.order_number, o.order_type, o.subtotal, o.total_amount,
+             o.status, o.paid_at, o.created_at, pay.payment_method,
+             GROUP_CONCAT(CONCAT(oi.product_name, ' ×', oi.quantity) SEPARATOR ', ') AS items_summary
+      FROM orders o
+      LEFT JOIN payments pay ON pay.order_id = o.id
+      LEFT JOIN order_items oi ON oi.order_id = o.id
+    `;
+    const params = [];
+
+    if (date) {
+      query += ' WHERE DATE(o.created_at) = ? ';
+      params.push(date);
+    }
+
+    query += ' GROUP BY o.id ORDER BY o.created_at DESC LIMIT 100';
+
+    const [rows] = await pool.query(query, params);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gagal mengambil riwayat pembelian dari database.' });
+  }
+});
+
 /* ============ POST /api/checkout ============ */
 app.post('/api/checkout', async (req, res) => {
   const { items, payment_method } = req.body;
@@ -205,7 +237,25 @@ app.post('/api/checkout', async (req, res) => {
     );
 
     await connection.commit();
-    res.json({ success: true, order_number: orderNumber, payment_method });
+
+    // Ambil timestamp asli dari order supaya struk menampilkan jam yang sama persis dengan yang tersimpan
+    const [[orderRow]] = await pool.query('SELECT paid_at FROM orders WHERE id = ?', [orderId]);
+
+    // Sertakan rincian item & total supaya frontend bisa langsung menampilkan struk tanpa fetch tambahan
+    res.json({
+      success: true,
+      order_number: orderNumber,
+      payment_method,
+      paid_at: orderRow.paid_at,
+      subtotal,
+      total_amount: subtotal,
+      items: itemDetails.map(item => ({
+        name: item.name,
+        price: Number(item.price),
+        quantity: item.quantity,
+        subtotal: item.lineSubtotal,
+      })),
+    });
   } catch (err) {
     await connection.rollback();
     console.error(err);

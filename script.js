@@ -3,6 +3,7 @@ const API = {
   products: '/api/products',
   restock:  '/api/restock',
   checkout: '/api/checkout',
+  orders:   '/api/orders',
 };
 
 // state logic
@@ -10,6 +11,10 @@ let products = [];               // hasil fetch dari database
 const cart = new Map();          // product id -> { id, name, price, image, stock, qty }
 
 const rupiah = value => 'Rp' + Number(value).toLocaleString('id-ID');
+const paymentLabel = method => ({
+  cash: 'Tunai', debit: 'Debit', credit_card: 'Kartu Kredit', qris: 'QRIS',
+}[method] || method || '-');
+const formatDateTime = value => new Date(value).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
 
 //  elemen yang digunakan untuk manipulasi DOM pada website
 const menuList       = document.querySelector('#menu-list');
@@ -25,6 +30,19 @@ const productForm     = document.querySelector('#product-form');
 const loginForm       = document.querySelector('#login-form');
 const loginError      = document.querySelector('#login-error');
 const logoutButton    = document.querySelector('#logout-button');
+const historyList     = document.querySelector('#history-list');
+const historyDate     = document.querySelector('#history-date');
+const historyFilterButton = document.querySelector('#history-filter-btn');
+const historyResetButton  = document.querySelector('#history-reset-btn');
+const openDashboardButton = document.querySelector('#open-dashboard');
+
+// elemen struk pembayaran
+const receiptOrderNumber = document.querySelector('#receipt-order-number');
+const receiptDate        = document.querySelector('#receipt-date');
+const receiptItems       = document.querySelector('#receipt-items');
+const receiptTotal       = document.querySelector('#receipt-total');
+const receiptPrintButton = document.querySelector('#receipt-print-btn');
+const receiptCloseButton = document.querySelector('#receipt-close-btn');
 
 //  sesi admin: fungsi-fungsi terkait autentikasi dan manajemen dashboard
 async function checkSession() {
@@ -200,8 +218,13 @@ function closeModal(id) {
 document.querySelector('#open-payment').addEventListener('click', () => { renderOrderSummary(); openModal('payment-modal'); });
 checkoutButton.addEventListener('click', () => { renderOrderSummary(); openModal('payment-modal'); });
 
+function setDashboardButtonLabel(isLoggedIn) {
+  openDashboardButton.textContent = isLoggedIn ? 'Dashboard' : 'Login';
+}
+
 document.querySelector('#open-dashboard').addEventListener('click', async () => {
   const user = await checkSession();
+  setDashboardButtonLabel(Boolean(user));
   if (user) {
     document.querySelector('#admin-greeting').textContent = `Halo, admin ${user.name}`;
     renderStockDashboard();
@@ -234,6 +257,7 @@ loginForm.addEventListener('submit', async event => {
 
     closeModal('login-modal');
     document.querySelector('#admin-greeting').textContent = `Halo, admin ${result.user.name}`;
+    setDashboardButtonLabel(true);
     renderStockDashboard();
     openModal('dashboard-modal');
   } catch (err) {
@@ -246,6 +270,7 @@ loginForm.addEventListener('submit', async event => {
 
 logoutButton.addEventListener('click', async () => {
   await fetch('/api/logout', { method: 'POST' });
+  setDashboardButtonLabel(false);
   closeModal('dashboard-modal');
 });
 
@@ -261,6 +286,27 @@ document.querySelectorAll('.payment-methods label').forEach(label => {
   });
 });
 document.querySelector('.payment-methods input:checked')?.closest('label')?.classList.add('selected');
+
+//  struk pembayaran: render isi struk.
+//  itemList & total diambil dari snapshot keranjang di browser (bukan dari respons server saja),
+//  supaya daftar barang tetap muncul walau server.js belum mengirim field "items".
+function renderReceipt({ orderNumber, paidAt, itemList, total }) {
+  receiptOrderNumber.textContent = orderNumber;
+  receiptDate.textContent = formatDateTime(paidAt || Date.now());
+  receiptTotal.textContent = rupiah(total);
+
+  receiptItems.innerHTML = itemList.map(item => `
+    <div class="receipt-item-row">
+      <div>
+        <div class="receipt-item-name">${item.name}</div>
+        <div class="receipt-item-qty">${item.qty} × ${rupiah(item.price)}</div>
+      </div>
+      <div class="receipt-item-subtotal">${rupiah(item.price * item.qty)}</div>
+    </div>`).join('');
+}
+
+receiptPrintButton.addEventListener('click', () => window.print());
+receiptCloseButton.addEventListener('click', () => closeModal('receipt-modal'));
 
 // proses bayar yang langsung ke kasir (tunai)
 payButton.addEventListener('click', async () => {
@@ -291,18 +337,32 @@ payButton.addEventListener('click', async () => {
 
     if (!res.ok || result.error) throw new Error(result.error || 'Pembayaran gagal.');
 
+    // Snapshot keranjang SEBELUM dikosongkan, supaya struk pasti punya daftar barangnya
+    const itemList = [...cart.values()].map(item => ({ name: item.name, price: item.price, qty: item.qty }));
+    const receiptData = {
+      orderNumber: result.order_number,
+      paidAt: result.paid_at,
+      itemList,
+      total: result.total_amount ?? total,
+    };
+
     payButton.classList.remove('processing');
     payButton.classList.add('success');
     payButton.innerHTML = '✓ Pembayaran berhasil';
 
+    // Siapkan struk sebelum keranjang dikosongkan, lalu tampilkan begitu modal pembayaran ditutup
     setTimeout(async () => {
       cart.clear();
       syncCart();
       closeModal('payment-modal');
       payButton.classList.remove('success');
       payButton.innerHTML = `Bayar sekarang <span id="payment-total">${rupiah(0)}</span>`;
+
+      renderReceipt(receiptData);
+      openModal('receipt-modal');
+
       await loadProducts(); // refresh stok terbaru dari database
-    }, 1100);
+    }, 900);
   } catch (err) {
     payButton.classList.remove('processing');
     payButton.disabled = false;
@@ -409,6 +469,62 @@ productForm.addEventListener('submit', async event => {
   }
 });
 
+/* dashboard: tab switching antara "Stok & Menu" dan "Riwayat Pembelian" */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.dashboard-content[data-panel]').forEach(panel => {
+      panel.hidden = panel.dataset.panel !== btn.dataset.tab;
+    });
+    if (btn.dataset.tab === 'riwayat') loadHistory(historyDate.value || null);
+  });
+});
+
+/* dashboard: riwayat pembelian */
+async function loadHistory(date) {
+  historyList.innerHTML = '<p class="empty-cart">Memuat riwayat…</p>';
+
+  try {
+    const url = date ? `${API.orders}?date=${date}` : API.orders;
+    const res = await fetch(url);
+
+    if (res.status === 401) {
+      historyList.innerHTML = '<p class="error-state">Sesi admin habis, silakan login ulang.</p>';
+      return;
+    }
+    if (!res.ok) throw new Error('Gagal memuat riwayat pembelian.');
+
+    const orders = await res.json();
+    renderHistory(orders);
+  } catch (err) {
+    historyList.innerHTML = `<p class="error-state">${err.message}</p>`;
+  }
+}
+
+function renderHistory(orders) {
+  if (orders.length === 0) {
+    historyList.innerHTML = '<p class="empty-cart">Belum ada transaksi untuk ditampilkan.</p>';
+    return;
+  }
+
+  historyList.innerHTML = orders.map(order => `
+    <div class="history-row">
+      <div class="history-main">
+        <p class="history-order-number">${order.order_number}</p>
+        <p class="history-date">${formatDateTime(order.created_at)}</p>
+        <p class="history-items">${order.items_summary || '-'}</p>
+      </div>
+      <div class="history-side">
+        <span class="history-method">${paymentLabel(order.payment_method)}</span>
+        <strong class="history-total">${rupiah(order.total_amount)}</strong>
+      </div>
+    </div>`).join('');
+}
+
+historyFilterButton.addEventListener('click', () => loadHistory(historyDate.value || null));
+historyResetButton.addEventListener('click', () => { historyDate.value = ''; loadHistory(); });
+
 // inisialisasi website/admin/dashboard
 syncCart();
 loadProducts();
+checkSession().then(user => setDashboardButtonLabel(Boolean(user)));

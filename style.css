@@ -112,4 +112,59 @@ button,a { font:inherit; } button { cursor:pointer; } a { color:inherit; text-de
 /*  Info stok di kartu menu */
 .menu-stock { margin:6px 0 0; font-size:12px; font-weight:600; color:#7a8f6f; }
 .menu-stock.out { color:#a83c33; }
- 
+
+/*  Dashboard: tab navigasi (Stok & Menu / Riwayat Pembelian) */
+.dashboard-tabs { display:flex; gap:18px; margin:20px 0 6px; border-bottom:1px solid var(--line); }
+.tab-btn { padding:9px 2px; margin-bottom:-1px; border:0; border-bottom:2px solid transparent; background:transparent; color:#8a6f5f; font-size:13px; font-weight:700; transition:color .15s, border-color .15s; }
+.tab-btn:hover { color:var(--brown-800); }
+.tab-btn.active { border-color:var(--orange); color:var(--brown-950); }
+
+/*  Dashboard: riwayat pembelian */
+.history-filter { display:flex; align-items:end; gap:10px; flex-wrap:wrap; margin:18px 0 16px; }
+.history-filter label { display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:600; color:var(--brown-800); }
+.history-filter input[type="date"] { padding:9px 10px; border:1px solid var(--line); border-radius:8px; font-size:13px; font-family:inherit; color:var(--brown-950); background:white; }
+.history-filter button { padding:9px 14px; border:1px solid #cdb7a5; border-radius:8px; background:transparent; color:var(--brown-800); font-size:12.5px; font-weight:700; transition:background .15s; }
+.history-filter button:hover { background:var(--cream-deep); }
+
+.history-list { display:flex; flex-direction:column; gap:10px; max-height:320px; overflow-y:auto; }
+.history-row { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:12px; border:1px solid var(--line); border-radius:10px; background:white; }
+.history-order-number { margin:0; font-size:13px; font-weight:700; color:var(--brown-950); }
+.history-date { margin:2px 0 0; font-size:11px; color:#8a6f5f; }
+.history-items { margin:6px 0 0; font-size:12px; color:#7a5f4f; line-height:1.4; }
+.history-side { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+.history-method { padding:3px 9px; border-radius:999px; background:var(--cream-deep); color:var(--brown-800); font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+.history-total { font-size:14px; font-weight:700; color:var(--brown-800); }
+
+@media (max-width:440px) {
+  .history-row { flex-direction:column; }
+  .history-side { flex-direction:row; align-items:center; justify-content:space-between; width:100%; }
+}
+
+/*  Struk pembayaran (muncul otomatis setelah bayar berhasil) */
+.receipt-dialog { max-width:360px; padding:24px 22px 22px; }
+.receipt-paper { padding:6px 2px 4px; }
+.receipt-head { padding-bottom:14px; margin-bottom:14px; border-bottom:1px dashed var(--line); text-align:center; }
+.receipt-brand { margin:0; font-family:'DM Serif Display',Georgia,serif; font-size:22px; color:var(--brown-950); }
+.receipt-sub { margin:4px 0 0; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#8a6f5f; }
+.receipt-meta { display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+.receipt-meta div { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12.5px; }
+.receipt-meta span { color:#8a6f5f; }
+.receipt-meta strong { color:var(--brown-950); font-weight:700; text-align:right; }
+.receipt-divider { border-top:1px dashed var(--line); margin:2px 0; }
+.receipt-items { display:flex; flex-direction:column; gap:10px; padding:14px 0; }
+.receipt-item-row { display:flex; align-items:baseline; justify-content:space-between; gap:10px; font-size:13px; }
+.receipt-item-name { color:var(--brown-950); }
+.receipt-item-qty { color:#8a6f5f; font-size:11.5px; }
+.receipt-item-subtotal { flex-shrink:0; font-weight:700; color:var(--brown-800); white-space:nowrap; }
+.receipt-total-row { display:flex; align-items:center; justify-content:space-between; padding:14px 0 4px; font-size:14px; color:var(--brown-950); }
+.receipt-total-row strong { font-size:19px; color:var(--brown-800); }
+.receipt-thanks { margin:14px 0 0; font-size:12px; text-align:center; color:#8a6f5f; }
+.receipt-actions { display:flex; gap:10px; margin-top:20px; }
+.receipt-actions .admin-button { flex:1; text-align:center; }
+.receipt-actions .pay-button { flex:1; }
+
+@media print {
+  body * { visibility:hidden; }
+  .receipt-paper, .receipt-paper * { visibility:visible; }
+  .receipt-paper { position:absolute; top:0; left:0; width:100%; padding:0; }
+}
